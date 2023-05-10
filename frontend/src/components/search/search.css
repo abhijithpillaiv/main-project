@@ -1,0 +1,32 @@
+.capsule-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    padding-top: 20px;
+  }
+
+  .capsule {
+    background-color: #f0f0f0;
+    border-radius: 50px;
+    padding-left: 15px;
+    height: 35px;
+    white-space: nowrap; /* Prevents text from wrapping */
+    overflow: hidden; /* Hides overflow text */
+    transition: width 0.3s ease; /* Adds a smooth transition effect to width changes */
+    cursor: pointer;
+  }
+  #opt-selected{
+    background-color: rgb(107, 175, 107);
+  }
+
+  .capsule-text {
+    font-size: 15px;
+    font-weight: bold;
+    color: #000;
+    padding-top: 5px;
+  }
+  .capsule-radio {
+    margin-bottom: 10px;
+    width: 16px;
+  }
