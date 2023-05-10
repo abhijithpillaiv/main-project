@@ -14,6 +14,7 @@ export default function account() {
     const [height, setheight] = useState(null);
     const [weight, setweight] = useState(null);
     const [activity, setactivity] = useState(null);
+    const [diet, setdiet] = useState(null)
 
     const [bmi, setbmi] = useState(null);
     const [bmr, setbmr] = useState(null);
@@ -25,13 +26,13 @@ export default function account() {
     const [mwg, setmwg] = useState(0)
     const [hwl, sethwl] = useState(0)
     const [hwg, sethwg] = useState(0)
+    const [calorieneed, setcalorieneed] = useState(0)
     var flag = 0;
     const [user, setuser] = useState(false)
     // Get details
     useEffect(() => {
         if (cookies.data1) {
             axios.get(port + '/api/getDetails/' + cookies.data1).then((res) => {
-                console.log(res.data);
                 if (res.data) {
                     setage(res.data.age)
                     setgender(res.data.gender)
@@ -47,8 +48,11 @@ export default function account() {
                     setmwg(res.data.data.cneed.mwg)
                     sethwl(res.data.data.cneed.hwl)
                     sethwg(res.data.data.cneed.hwg)
+                    setdiet(res.data.dietplan)
+                    const d=res.data.dietplan
+                    setcalorieneed(res.data.data.cneed[d])
                 } setuser(res.data)
-
+                
             })
             axios.get(port + '/api/getUser/' + cookies.data1).then((res) => {
                 setname(res.data.name)
@@ -57,12 +61,15 @@ export default function account() {
         }
     }, [cookies])
 
+useEffect(() => {
+  console.log(calorieneed);
+}, [calorieneed])
 
-    const submitHandler = (e) => {
-        e.preventDefault()
-        axios.post(port + '/api/setDetails/', { id: cookies.data1, gender: gender, height: height, weight: weight, activity: activity, age: age, data: null }).then((res) => {
+    const submitHandler = () => {
+        axios.post(port + '/api/setDetails/', { id: cookies.data1, gender: gender, height: height, weight: weight, activity: activity, age: age,dietplan:diet, data: null }).then((res) => {
             console.log(res);
-            window.location.reload(true)            
+            window.alert("Health details added.")
+            window.location.reload()            
         })
     }
     return (
@@ -112,6 +119,18 @@ export default function account() {
                                     <option value="extreme">extreme</option>
                                 </select>
                             </div>
+                            <div className="col-xl-3 col-lg-6 col-12 form-group">
+                                <label>Diet plan *</label>
+                                <select required value={diet} name="gender" onChange={(e) => setdiet(e.target.value)} className="select2 form-control ">
+                                    <option value="">Please Select your Diet plan *</option>
+                                    <option value="mwl">Weight lose</option>
+                                    <option value="hwl">Heavy Weight lose</option>
+                                    <option value="mwg">Weight gain</option>
+                                    <option value="hwg">Heavy Weight gain</option>
+                                    <option value="bal">balance</option>
+                                </select>
+                            </div>
+                            
 
                             <div className="col-12 form-group mg-t-8">
                                 <button onClick={(e) => submitHandler(e)} className="btn-fill-lg btn-gradient-yellow btn-hover-bluedark">Save</button>
@@ -121,31 +140,35 @@ export default function account() {
                     </form>
                     <div className='container-fluid'>
                     {bmi && bmr && amr && <div className='row'>
-                            <span className='col-6'><table>
+                            <span className='col-7'><table>
                             <tbody>
-                                <tr style={{ paddingTop: '5px', fontFamily: 'cursive', fontWeight: 'bold' }}>
-                                    <td style={{ textAlign: 'left', fontSize: '25px' }}>Your BMI</td>
+                                <tr style={{ paddingTop: '5px', fontWeight: 'normal' }}>
+                                    <td style={{ textAlign: 'left', fontSize: '15px' }}>Your BMI</td>
                                     <td /><td /><td />
-                                    <td style={{ fontSize: '20px' }}>: {bmi}</td></tr>
+                                    <td style={{ fontSize: '15px' }}>: {bmi}</td></tr>
 
-                                <tr style={{ paddingTop: '5px', fontFamily: 'cursive', fontWeight: 'bold' }}>
-                                    <td style={{ textAlign: 'left', fontSize: '25px' }}>Your BMR</td>
+                                <tr style={{ paddingTop: '5px', fontWeight: 'normal' }}>
+                                    <td style={{ textAlign: 'left', fontSize: '15px' }}>Your BMR</td>
                                     <td /><td /><td />
-                                    <td style={{ fontSize: '20px' }}>: {bmr}</td></tr>
+                                    <td style={{ fontSize: '15px' }}>: {bmr}</td></tr>
 
-                                <tr style={{ paddingTop: '5px', fontFamily: 'cursive', fontWeight: 'bold' }}>
-                                    <td style={{ textAlign: 'left', fontSize: '25px' }}>Your AMR</td>
+                                <tr style={{ paddingTop: '5px', fontWeight: 'normal' }}>
+                                    <td style={{ textAlign: 'left', fontSize: '15px' }}>Your AMR</td>
                                     <td /><td /><td />
-                                    <td style={{ fontSize: '20px' }}>: {amr}</td></tr>
+                                    <td style={{ fontSize: '15px' }}>: {amr}</td></tr>
 
-                                <tr style={{ paddingTop: '5px', fontFamily: 'cursive', fontWeight: 'bold' }}>
-                                    <td style={{ textAlign: 'left', fontSize: '25px' }}>Your Ideal body weight</td>
+                                <tr style={{ paddingTop: '5px', fontWeight: 'normal' }}>
+                                    <td style={{ textAlign: 'left', fontSize: '15px' }}>Your Ideal body weight</td>
                                     <td /><td /><td />
-                                    <td style={{ fontSize: '20px' }}>: {idealBodyWeight}</td></tr>
+                                    <td style={{ fontSize: '15px' }}>: {idealBodyWeight} KG</td>
+                                </tr>
+                                <tr style={{ paddingTop: '15px', fontWeight: 'bold' }}>
+                                    <td>According to your diet plan you can have {calorieneed} calories daily</td>
+                                </tr>
 
                             </tbody>
                         </table></span>
-                        <div className='col-6'><CChart
+                        <div className='col-5'><CChart
                                 type="bar"
                                 data={{
                                     labels: ['balance', 'mildWeightLoss', 'mildWeightGain', 'heavyWeightLoss', 'heavyWeightGain'],

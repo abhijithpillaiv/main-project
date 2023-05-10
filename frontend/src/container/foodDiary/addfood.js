@@ -18,9 +18,10 @@ export default function Addfood() {
   const [img, setimg] = useState(null);
   const [Preview, setPreview] = useState('');
   const [toggle, settoggle] = useState(null);
-
+  const [notimage, setnotimage] = useState(false)
   const clickHandler = () => {
     var join = diet.join("");
+    console.log(recip);
     axios
       .get(
         "https://api.edamam.com/api/recipes/v2?type=public&q=" +
@@ -30,24 +31,48 @@ export default function Addfood() {
       )
       .then((response) => {
         setres(response.data.hits);
+        console.log(response.data.hits);
+      });
+  };
+  const searchHandler = (recip) => {
+    var join = diet.join("");
+    console.log(recip);
+    axios
+      .get(
+        "https://api.edamam.com/api/recipes/v2?type=public&q=" +
+          recip +
+          "&app_id=d2645311&app_key=905c24c8760889ee37fccc59931366f0" +
+          join
+      )
+      .then((response) => {
+        setres(response.data.hits);
+        console.log(response.data.hits);
+        settoggle(false)
       });
   };
 
   const handleUploadImage = async() => {
-    settoggle(true)
+    img&&settoggle(true)
     const data = new FormData();
     data.append('file', img);
     data.append('filename', 'filename');
-    axios({
+    img&&axios({
         method: "post",
         url: 'http://localhost:5000/upload',
          data: data,
     }).then((response) => {
+      console.log(response.data.value);
       if (response.data.value.includes('_')) {
-        setrecip(response.data.value.replace(/_/g, " "))
-      }
-        clickHandler()
+        searchHandler(response.data.value.replace(/_/g, " "))
+      }else if(response.data.value==="Not a food item !"){
+        setnotimage(true)
+        setres([])
         settoggle(false)
+      }
+      else{
+        searchHandler(response.data.value)
+      }
+
     })
 }
   return (
@@ -90,6 +115,8 @@ export default function Addfood() {
                                 <button onClick={handleUploadImage} className='btn btn-success'>Upload</button>
                                 {toggle?<span style={{paddingLeft:'30px'}}><CSpinner size='sm' color="danger"/></span>:null}
                             </div>
+                            {notimage&&<div>Sorry its not an image!</div>}
+
                         </div>
           </div>
           <div>

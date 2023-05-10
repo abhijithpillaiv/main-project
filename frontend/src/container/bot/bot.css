@@ -231,3 +231,7 @@
       clear: both;
       margin-bottom: 70px;
   }
+  .personalmodel-title{
+    color: white;
+    cursor: pointer;
+  }

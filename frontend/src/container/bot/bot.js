@@ -16,7 +16,6 @@ function Bot() {
   const [toggle, settoggle] = useState(false)
   const [isFetchingResponse, setIsFetchingResponse] = useState(false);
   const [randommsg, setrandommsg] = useState(false);
-  const [personalmodelres, setpersonalmodelres] = useState([])
   const handleInputChange = (event) => {
     setInputMsg(event.target.value);
   };
@@ -59,7 +58,6 @@ function Bot() {
       }).then((response) => {
         console.log(response.data);
         setchatHistorypersonal((prevArray) => [...prevArray, inputMsg, response.data.output]);
-        // setpersonalmodelres([...personalmodelres, response.data.output]);
         setIsFetchingResponse(false)
       })
     }
@@ -88,16 +86,18 @@ function Bot() {
               <Chatmsg clsname={index % 2 === 0 ? 'self' : 'user'} type={array.length - 1 === index ? true : false} inputMsg={msg} />
 
             ))}
+            
+            {chatHistory.length < 2 && !isFetchingResponse && <span style={{ cursor: 'pointer' }} onClick={() => setrandommsg(true)}><Chatmsg type={true} inputMsg={"Not happy! Click to get more accurate prediction where we use our personalised model."} clsname={'self'} /></span>}
+            {randommsg && <Chatmsg type={false} inputMsg={"Add your ingredients using a ; seperator"} clsname={'self'} />}
+            
+            {
+              chatHistorypersonal && chatHistorypersonal.map((msg, index, array) => (
+                index % 2 === 0 ? <Chatmsg type={false} inputMsg={msg} clsname={'user'} /> : <Personalmodel type={array.length - 1 === index ? true : false} body={msg} />
+              ))
+            }
             {inputMsg && isFetchingResponse && (
               <Chatmsg clsname={"user"} inputMsg={inputMsg} />
             )}
-            {chatHistory.length > 2 && !isFetchingResponse && <span style={{ cursor: 'pointer' }} onClick={() => setrandommsg(true)}><Chatmsg type={true} inputMsg={"Not happy! Click to get more accurate prediction where we use our personalised model."} clsname={'self'} /></span>}
-            {randommsg && <Chatmsg type={false} inputMsg={"Add your ingredients using a ; seperator"} clsname={'self'} />}
-            {
-              chatHistorypersonal && chatHistorypersonal.map((msg, index, array) => (
-                index % 2 === 0 ? <Chatmsg type={array.length - 1 === index ? true : false} inputMsg={msg} clsname={'user'} /> : <Personalmodel type={array.length - 1 === index ? true : false} body={msg} />
-              ))
-            }
             {isFetchingResponse && (
               <div id="cm-msg" className="chat-msg self">
                 <span className="msg-avatar">

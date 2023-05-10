@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { ReactSearchAutocomplete } from 'react-search-autocomplete'
-import Button from 'react-bootstrap/Button';
 function search({ setrecipe }) {
   // const [rec, setrec] = useState(null)
   // note: the id field is mandatory

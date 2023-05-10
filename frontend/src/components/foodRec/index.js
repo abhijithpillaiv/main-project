@@ -48,7 +48,7 @@ export default function foodrec() {
                         <div style={{ padding: '10px' }}>
                             <img style={{ height: '200px', width: 'auto' }} src={Preview ? Preview : add} alt="img" />
                             <div style={{ paddingTop: '50px' }}>
-                                <input onChange={(e) => { setimg(e.target.files[0]); setPreview(URL.createObjectURL(e.target.files[0])) }} type="file" />
+                                <input onChange={(e) => { setimg(e.target.files[0]); setPreview(URL.createObjectURL(e.target.files[0])),setblg(null)}} type="file" />
                             </div>
                             <br />
                             <div >

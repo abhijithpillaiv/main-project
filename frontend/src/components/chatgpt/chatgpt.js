@@ -2,7 +2,7 @@ const { Configuration, OpenAIApi } = require("openai");
 
 export default async function chatgpt(msg) {
   const configuration = new Configuration({
-    apiKey: "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",
+    apiKey: "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",
   });
   const openai = new OpenAIApi(configuration);
   let human=msg

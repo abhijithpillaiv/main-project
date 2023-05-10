@@ -23,6 +23,7 @@ export default function index() {
   const [confirm, setconfirm] = useState(false);
   const [fooditems, setfooditems] = useState(null);
   const [local_t_strap, setlocal_t_strap] = useState(new Date())
+  const [calorieneed, setcalorieneed] = useState(0)
 
   useEffect(() => {
     const datesArrays = [];
@@ -56,6 +57,17 @@ export default function index() {
       });
     }
   }, [cookies,date]);
+  useEffect(() => {
+    if (cookies.data1) {
+        axios.get(port + '/api/getDetails/' + cookies.data1).then((res) => {
+            if (res.data) {
+                const d=res.data.dietplan
+                setcalorieneed(res.data.data.cneed[d])
+            }      
+        })
+    }
+}, [cookies])
+  
 
   return (
     <>
@@ -123,7 +135,9 @@ export default function index() {
             </div>
             {date===new Date().toLocaleString().split(',')[0]&&<div className="fooddiary-addfood">
               <span className="fooddiary-addfood-info">
-                You have got {240} calories remaining{" "}
+                {Math.floor(calorieneed-(chartval[6]?chartval[6][0].calories:0))>0?<>
+                You have got {Math.floor(calorieneed-(chartval[6]?chartval[6][0].calories:0))} calories remaining</>:
+                <>You have exceeded {Math.abs(Math.floor(calorieneed-(chartval[6]?chartval[6][0].calories:0)))} calories</>}
                 
               </span>
               <span style={{ marginTop: "5px",paddingLeft:'10px' }}>
